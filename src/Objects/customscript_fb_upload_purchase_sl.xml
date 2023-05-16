@@ -7,13 +7,42 @@
   <notifyowner>T</notifyowner>
   <notifyuser>F</notifyuser>
   <scriptfile>[/SuiteScripts/Purchase contract import/FB - Upload Purchase Contract SL.js]</scriptfile>
+  <scriptcustomfields>
+    <scriptcustomfield scriptid="custscript_fb_csv_folder">
+      <accesslevel>2</accesslevel>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description></description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <fieldtype>TEXT</fieldtype>
+      <help></help>
+      <isformula>F</isformula>
+      <ismandatory>T</ismandatory>
+      <label>Saved CSV folder</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <setting></setting>
+      <storevalue>T</storevalue>
+    </scriptcustomfield>
+  </scriptcustomfields>
   <scriptdeployments>
     <scriptdeployment scriptid="customdeploy_fb_upload_purchase_sl_1">
       <allemployees>T</allemployees>
       <allpartners>F</allpartners>
       <allroles>T</allroles>
       <audslctrole></audslctrole>
-      <audsubsidiary>[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]</audsubsidiary>
+      <custscript_fb_csv_folder>3591</custscript_fb_csv_folder>
       <eventtype></eventtype>
       <isdeployed>T</isdeployed>
       <isonline>F</isonline>
