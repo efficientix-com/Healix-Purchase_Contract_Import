@@ -12,19 +12,17 @@
  * Modified by         -> Dylan Mendoza <dylan.mendoza@freebug.mx>
  * Script in NS        -> FB - Upload Purchase Contract SL <ID del registro>
  */
-define(['N/file', 'N/https', 'N/log', 'N/record', 'N/redirect', 'N/search', 'N/task', 'N/url', 'N/ui/serverWidget', 'N/runtime'],
+define(['N/file', 'N/log', 'N/record', 'N/redirect', 'N/task', 'N/url', 'N/ui/serverWidget', 'N/runtime'],
     /**
  * @param{file} file
- * @param{https} https
  * @param{log} log
  * @param{record} record
  * @param{redirect} redirect
- * @param{search} search
  * @param{task} task
  * @param{url} url
  * @param{serverWidget} ui
  */
-    (file, https, log, record, redirect, search, task, url, ui, runtime) => {
+    (file, log, record, redirect, task, url, ui, runtime) => {
         /**
          * Defines the Suitelet script trigger point.
          * @param {Object} scriptContext
