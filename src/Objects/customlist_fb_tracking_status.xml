@@ -1,34 +1,44 @@
 <customlist scriptid="customlist_fb_tracking_status">
   <description></description>
   <isinactive>F</isinactive>
-  <ismatrixoption>F</ismatrixoption>
   <isordered>T</isordered>
   <name>Uploaded files tracking status</name>
   <customvalues>
     <customvalue scriptid="val_312423_7076975_sb1_313">
-      <abbreviation>R</abbreviation>
       <isinactive>F</isinactive>
       <value>Received</value>
     </customvalue>
     <customvalue scriptid="val_312424_7076975_sb1_748">
-      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>Processing</value>
     </customvalue>
     <customvalue scriptid="val_312425_7076975_sb1_177">
-      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>Processed</value>
     </customvalue>
     <customvalue scriptid="val_312426_7076975_sb1_277">
-      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>Processed with errors</value>
     </customvalue>
     <customvalue scriptid="val_312442_7076975_sb1_761">
-      <abbreviation>E</abbreviation>
       <isinactive>F</isinactive>
       <value>Error</value>
+    </customvalue>
+    <customvalue scriptid="val_315841_7076975_sb1_115">
+      <isinactive>F</isinactive>
+      <value>Loading information</value>
+    </customvalue>
+    <customvalue scriptid="val_315842_7076975_sb1_183">
+      <isinactive>F</isinactive>
+      <value>Validating information</value>
+    </customvalue>
+    <customvalue scriptid="val_315843_7076975_sb1_919">
+      <isinactive>F</isinactive>
+      <value>Executing contracts</value>
+    </customvalue>
+    <customvalue scriptid="val_315844_7076975_sb1_963">
+      <isinactive>F</isinactive>
+      <value>Finishing process</value>
     </customvalue>
   </customvalues>
 </customlist>
