@@ -25,5 +25,10 @@
       <isinactive>F</isinactive>
       <value>Processed with errors</value>
     </customvalue>
+    <customvalue scriptid="val_312442_7076975_sb1_761">
+      <abbreviation>E</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Error</value>
+    </customvalue>
   </customvalues>
 </customlist>
