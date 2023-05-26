@@ -8,7 +8,7 @@
  * @copyright Tekiio México 2023
  * 
  * Client              -> Healix
- * Last modification   -> 16/05/2023
+ * Last modification   -> 25/05/2023
  * Modified by         -> Dylan Mendoza <dylan.mendoza@freebug.mx>
  * Script in NS        -> FB - Upload Purchase Contract SL <customscript_fb_upload_purchase_sl>
  */
@@ -81,19 +81,29 @@ define(['N/file', 'N/log', 'N/record', 'N/redirect', 'N/task', 'N/url', 'N/ui/se
                         ignoreMandatoryFields: true
                     });
                     log.debug({title:'Registro creado', details:trackingId});
-                    var mrTask = task.create({
-                        taskType: task.TaskType.MAP_REDUCE,
-                        scriptId: "customscript_fb_carte_purchase_mr",
-                        deploymentId: 'customdeploy_fb_carte_purchase_mr_1',
-                        params: {
-                            custscript_fb_carte_record_to_process: trackingId
+                    for (var implementation = 1; implementation < 6; implementation++) {
+                        try {
+                            var idImplementation = 'customdeploy_fb_carte_purchase_mr_' + implementation;
+                            var mrTask = task.create({
+                                taskType: task.TaskType.MAP_REDUCE,
+                                scriptId: "customscript_fb_carte_purchase_mr",
+                                deploymentId: idImplementation,
+                                params: {
+                                    custscript_fb_carte_record_to_process: trackingId
+                                }
+                            });
+                            var taskid = mrTask.submit();
+                            redirect.toRecord({
+                                type: 'customrecord_fb_uploaded_files',
+                                id: trackingId
+                            });
+                            break;
+                        } catch (error) {
+                            log.error({title:'Implementación ocupada', details:error});
                         }
-                    });
-                    var taskid = mrTask.submit();
-                    redirect.toRecord({
-                        type: 'customrecord_fb_uploaded_files',
-                        id: trackingId
-                    });
+                    }
+                    var formError = createFormError('Files are currently being processed, please try again later.');
+                    response.writePage(formError);
                 }
             } catch (error) {
                 log.error({title:'processFile', details:error});

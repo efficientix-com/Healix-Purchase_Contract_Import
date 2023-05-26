@@ -345,11 +345,11 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                     });
                     contractLine++;
                 }
-                var transId = 269;
-                // var transId = contractObj.save({
-                //     enableSourcing: true,
-                //     ignoreMandatoryFields: true
-                // });
+                // var transId = 269;
+                var transId = contractObj.save({
+                    enableSourcing: true,
+                    ignoreMandatoryFields: true
+                });
                 dataReturn.succes = true;
                 dataReturn.idContract = transId;
             } catch (error) {
@@ -427,11 +427,11 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                         sublistId: 'item'
                     });
                 }
-                var transId = 1507;
-                // var transId = contractObj.save({
-                //     enableSourcing: true,
-                //     ignoreMandatoryFields: true
-                // });
+                // var transId = 1507;
+                var transId = contractObj.save({
+                    enableSourcing: true,
+                    ignoreMandatoryFields: true
+                });
                 dataReturn.succes = true;
                 dataReturn.idContract = transId;
             } catch (error) {
