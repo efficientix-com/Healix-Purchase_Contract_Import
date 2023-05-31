@@ -331,6 +331,7 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                     var position = newLinesIds.indexOf(itemValue);
                     if (position != -1) {
                         // log.debug({title:'Data set', details:position});
+                        // log.debug({title:'dataSearch', details:datos[position]});
                         var quantityItem = datos[position][8];
                         var rateItem = datos[position][9];
                         contractObj.setSublistValue({
@@ -346,6 +347,7 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                             value: rateItem
                         });
                         datos.splice(position, 1);
+                        newLinesIds.splice(position, 1);
                     }
                 }
                 log.debug({title:'NewDatos', details:datos});
