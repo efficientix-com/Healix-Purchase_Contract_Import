@@ -8,7 +8,7 @@
  * @copyright Tekiio México 2023
  * 
  * Client              -> Healix
- * Last modification   -> 25/05/2023
+ * Last modification   -> 31/05/2023
  * Modified by         -> Dylan Mendoza <dylan.mendoza@freebug.mx>
  * Script in NS        -> FB - Create Purchase contract MR <customscript_fb_carte_purchase_mr>
  */
@@ -307,6 +307,11 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
             var dataReturn = {succes: false, error: '', idContract: ''};
             var transUpdId = datos[0][0];
             try {
+                var newLinesIds = [];
+                for (var newLineId = 0; newLineId < datos.length; newLineId++) {
+                    newLinesIds.push(datos[newLineId][6]);
+                }
+                // log.debug({title:'AllItemsId', details:newLinesIds});
                 var contractObj = record.load({
                     type: record.Type.PURCHASE_CONTRACT,
                     id: transUpdId
@@ -315,6 +320,36 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                 var contractLine = contractObj.getLineCount({
                     sublistId: 'item'
                 });
+                // Update existing lines
+                for (var actualLine = 0; actualLine < contractLine; actualLine++) {
+                    var itemValue = contractObj.getSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'item',
+                        line: actualLine
+                    });
+                    // log.debug({title:'acual Line: ' + actualLine, details:itemValue});
+                    var position = newLinesIds.indexOf(itemValue);
+                    if (position != -1) {
+                        // log.debug({title:'Data set', details:position});
+                        var quantityItem = datos[position][8];
+                        var rateItem = datos[position][9];
+                        contractObj.setSublistValue({
+                            sublistId: 'item',
+                            fieldId: 'quantity',
+                            line: actualLine,
+                            value: quantityItem
+                        });
+                        contractObj.setSublistValue({
+                            sublistId: 'item',
+                            fieldId: 'rate',
+                            line: actualLine,
+                            value: rateItem
+                        });
+                        datos.splice(position, 1);
+                    }
+                }
+                log.debug({title:'NewDatos', details:datos});
+                // Add new Lines
                 for (var newLine = 0; newLine < datos.length; newLine++) {
                     var dataInLine = datos[newLine];
                     // log.debug({title:'datainLine', details:dataInLine});
