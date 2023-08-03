@@ -201,7 +201,7 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                     if (idContract && idContract != '') {
                         notes = '\n The lines do not match for the ID contract: ' + idContract;
                     }else{
-                        notes = '\n The lines do not match for the Ship to Contract: ' + shipTo + ' and Vendor: ' + vendorNumber;
+                        notes = '\n The lines do not match for the Ship to Contract: ' + shipTo + ', Vendor: ' + vendorNumber + ' and customer ' + cusContract;
                     }
                     log.error({title:'Error no coinciden lineas en file', details:notes});
                     updateTrackingRecord(parameter_record, 7, notes, '', false);
@@ -219,7 +219,7 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                         if (idContract && idContract != '') {
                             notes = '\n ' + validateResult.error +' for the ID contract: ' + idContract;
                         }else{
-                            notes = '\n ' + validateResult.error +' for the Ship to Contract: ' + shipTo + ' and Vendor: ' + vendorNumber;
+                            notes = '\n ' + validateResult.error +' for the Ship to Contract: ' + shipTo + ', Vendor: ' + vendorNumber + ' and Customer ' + cusContract;
                         }
                         log.audit({title:'Error al validar infor', details:notes});
                         updateTrackingRecord(parameter_record, 7, notes, '', false);

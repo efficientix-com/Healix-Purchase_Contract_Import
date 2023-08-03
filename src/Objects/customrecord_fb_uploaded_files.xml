@@ -13,7 +13,6 @@
   <description>This record will contain all the information and progress about the data uploaded through CSV file.</description>
   <enabledle>T</enabledle>
   <enablekeywords>T</enablekeywords>
-  <enablemailmerge>F</enablemailmerge>
   <enablenametranslation>F</enablenametranslation>
   <enablenumbering>F</enablenumbering>
   <enableoptimisticlocking>T</enableoptimisticlocking>
@@ -51,7 +50,7 @@
       <defaultvalue></defaultvalue>
       <description></description>
       <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
+      <displaytype>LOCKED</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
@@ -129,7 +128,7 @@
       <defaultvalue></defaultvalue>
       <description></description>
       <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
+      <displaytype>LOCKED</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
@@ -168,7 +167,7 @@
       <defaultvalue></defaultvalue>
       <description></description>
       <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
+      <displaytype>LOCKED</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
@@ -206,9 +205,9 @@
       <defaultselection></defaultselection>
       <defaultvalue></defaultvalue>
       <description></description>
-      <displayheight></displayheight>
+      <displayheight>12</displayheight>
       <displaytype>NORMAL</displaytype>
-      <displaywidth></displaywidth>
+      <displaywidth>120</displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
       <fieldtype>TEXTAREA</fieldtype>
