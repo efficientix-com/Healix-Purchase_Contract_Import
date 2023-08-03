@@ -8,7 +8,7 @@
  * @copyright Tekiio México 2023
  * 
  * Client              -> Healix
- * Last modification   -> 31/05/2023
+ * Last modification   -> 03/08/2023
  * Modified by         -> Dylan Mendoza <dylan.mendoza@freebug.mx>
  * Script in NS        -> FB - Create Purchase contract MR <customscript_fb_carte_purchase_mr>
  */
@@ -61,44 +61,65 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                     var newContract = [];
                     var linenumber = 0;
                     iterator.each(function(line){
-                        var lineValues = line.value.split(',');
-                        // log.debug({title:'lineValues: ' + linenumber, details:lineValues});
-                        if (linenumber == 0) {
-                            if (lineValues[0].toLowerCase() == 'id' && lineValues[1].toLowerCase() == 'vendor number' 
-                            && lineValues[2].toLowerCase() == 'vendor name' && lineValues[3].toLowerCase() == 'subsidiary' 
-                            && lineValues[4].toLowerCase() == 'location' && lineValues[5].toLowerCase() == 'date' 
-                            && lineValues[6].toLowerCase() == 'item sku' && lineValues[7].toLowerCase() == 'item name' 
-                            && lineValues[8].toLowerCase() == 'quantity' && lineValues[9].toLowerCase() == 'rate' 
-                            && lineValues[10].toLowerCase() == 'ship to contract' && lineValues[11].toLowerCase() == 'customer contract') {
-                                linenumber++;
-                                return true;
-                            }else{ // No se tiene bien la estructura
-                                updateTrackingRecord(parameter_record, 6, 'The file does not have the correct structure.', '', false);
-                                return false;
+                        // log.debug({ title:'Validacion', details:{lineN: line.includes('\n'), liner: line.includes('\r'), linenr: line.includes('\n\r')} });
+                        if (line.value != '') {
+                            // log.debug({ title:'linevalue', details:line.value });
+                            if (line.value.includes('"')) {
+                                // log.debug({title:'lineValues: ' + linenumber, details:line.value});
+                                var datoComillas = line.value.split('"');
+                                datoComillas = datoComillas[1]
+                                // log.debug({ title:'valueComillas', details:datoComillas });
+                                var datoNumber = datoComillas.replace(/,+/g, '');
+                                datoNumber = datoNumber*1;
+                                line.value = line.value.replace(datoComillas, datoNumber)
+                                // log.debug({title:'lineValues: ' + linenumber, details:line.value});
                             }
+                            var lineValues = line.value.split(',');
+                            // log.debug({title:'lineValues: ' + linenumber, details:lineValues});
+                            // if (linenumber==34) {
+                            //     log.debug({ title:'linevalue', details:line.value });
+                            // }
+                            if (linenumber == 0) {
+                                if (lineValues[0].toLowerCase() == 'id' && lineValues[1].toLowerCase() == 'vendor number' 
+                                && lineValues[2].toLowerCase() == 'vendor name' && lineValues[3].toLowerCase() == 'subsidiary' 
+                                && lineValues[4].toLowerCase() == 'date' 
+                                && lineValues[5].toLowerCase() == 'item sku' && lineValues[6].toLowerCase() == 'item name' 
+                                && lineValues[7].toLowerCase() == 'quantity' && lineValues[8].toLowerCase() == 'rate' 
+                                && lineValues[9].toLowerCase() == 'ship to contract' && lineValues[10].toLowerCase() == 'customer contract') {
+                                    linenumber++;
+                                    return true;
+                                }else{ // No se tiene bien la estructura
+                                    updateTrackingRecord(parameter_record, 6, 'The file does not have the correct structure.', '', false);
+                                    return false;
+                                }
+                            }
+                            // log.debug({title:'Validacion', details:idsContract.indexOf(lineValues[0])});
+                            if (lineValues[0] != '') { // Linea para agregar a contrato
+                                if (idsContract.indexOf(lineValues[0]) == -1) { // no hay grupo para esta linea
+                                    dataGroups[lineValues[0]] = {lines:[lineValues]};
+                                    idsContract.push(lineValues[0]);
+                                }else{ // ya existe grupo para esta linea
+                                    dataGroups[lineValues[0]].lines.push(lineValues);
+                                }
+                            }else{ // nuevos contratos
+                                var newContractId = lineValues[1]+'-'+lineValues[9]+'-'+lineValues[10];
+                                if (newContract.indexOf(newContractId) == -1) { // no hay grupo para esta linea
+                                    newDataGroups[newContractId] = {lines:[lineValues]};
+                                    newContract.push(newContractId);
+                                }else{ // ya existe grupo para esta linea
+                                    newDataGroups[newContractId].lines.push(lineValues);
+                                }
+                            }
+                            linenumber++;
                         }
-                        // log.debug({title:'Validacion', details:idsContract.indexOf(lineValues[0])});
-                        if (lineValues[0] != '') { // Linea para agregar a contrato
-                            if (idsContract.indexOf(lineValues[0]) == -1) { // no hay grupo para esta linea
-                                dataGroups[lineValues[0]] = {lines:[lineValues]};
-                                idsContract.push(lineValues[0]);
-                            }else{ // ya existe grupo para esta linea
-                                dataGroups[lineValues[0]].lines.push(lineValues);
-                            }
-                        }else{ // nuevos contratos
-                            var newContractId = lineValues[10]+'-'+lineValues[1];
-                            if (newContract.indexOf(newContractId) == -1) { // no hay grupo para esta linea
-                                newDataGroups[newContractId] = {lines:[lineValues]};
-                                newContract.push(newContractId);
-                            }else{ // ya existe grupo para esta linea
-                                newDataGroups[newContractId].lines.push(lineValues);
-                            }
-                        }
-                        linenumber++;
                         return true;
                     });
                     log.debug({title:'updContract', details:dataGroups});
+                    let keysUpd = Object.keys(dataGroups);
+                    log.debug({ title:'keysUpd', details:{long:keysUpd.length, keys: keysUpd} });
                     log.debug({title:'newContracts', details:newDataGroups});
+                    let keysNew = Object.keys(newDataGroups);
+                    log.debug({ title:'keysNew', details:{long:keysNew.length, keys: keysNew} });
                     var finalData = []
                     for (var lineContra = 0; lineContra < idsContract.length; lineContra++) {
                         finalData.push(dataGroups[idsContract[lineContra]].lines);
@@ -154,21 +175,22 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                 // log.debug({title:'Indice: ' + indice, details:datos});
                 var idContract, vendorNumber, subsidiary, location, date, shipTo, cusContract;
                 for (var linea = 0; linea < datos.length; linea++) {
+                    // log.debug({ title:'Data lineMap', details:datos[linea] });
                     if (linea == 0) {
                         idContract = datos[linea][0];
                         vendorNumber = datos[linea][1];
                         subsidiary = datos[linea][3];
-                        location = datos[linea][4];
-                        date = datos[linea][5];
-                        shipTo = datos[linea][10];
-                        cusContract = datos[linea][11];
+                        date = datos[linea][4];
+                        shipTo = datos[linea][9];
+                        cusContract = datos[linea][10];
                         TOTALCONTRACTS = datos[linea][12];
                         // log.debug({title:'InfoToCheck', details:{idContract: idContract, vendorNumber: vendorNumber, subsidiary: subsidiary, location: location, date: date}});
                     }else{
                         if (idContract != datos[linea][0] || vendorNumber != datos[linea][1] || 
-                            subsidiary != datos[linea][3] || location != datos[linea][4] || 
-                            date != datos[linea][5] || shipTo != datos[linea][10] || 
-                            cusContract != datos[linea][11]) {
+                            subsidiary != datos[linea][3] || 
+                            date != datos[linea][4] || shipTo != datos[linea][9] || 
+                            cusContract != datos[linea][10]) {
+                            log.error({ title:'Data lineMap', details:datos });
                             error = true;
                         }
                     }
@@ -181,7 +203,7 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                     }else{
                         notes = '\n The lines do not match for the Ship to Contract: ' + shipTo + ' and Vendor: ' + vendorNumber;
                     }
-                    log.audit({title:'Error no coinciden lineas en file', details:notes});
+                    log.error({title:'Error no coinciden lineas en file', details:notes});
                     updateTrackingRecord(parameter_record, 7, notes, '', false);
                 }else{
                     var validateResult = validateInformation(datos);
@@ -332,8 +354,12 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                     if (position != -1) {
                         // log.debug({title:'Data set', details:position});
                         // log.debug({title:'dataSearch', details:datos[position]});
-                        var quantityItem = datos[position][8];
-                        var rateItem = datos[position][9];
+                        var quantityItem = datos[position][7];
+                        var rateItem = datos[lineData][8];
+                        if (rateItem.includes('"')) {
+                            rateItem = rateItem.replace(/"+/g, '');
+                        }
+                        rateItem = rateItem*1;
                         contractObj.setSublistValue({
                             sublistId: 'item',
                             fieldId: 'quantity',
@@ -356,8 +382,12 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                     var dataInLine = datos[newLine];
                     // log.debug({title:'datainLine', details:dataInLine});
                     var idItem = datos[newLine][6];
-                    var quantityItem = datos[newLine][8];
-                    var rateItem = datos[newLine][9];
+                    var quantityItem = datos[newLine][7];
+                    var rateItem = datos[lineData][8];
+                    if (rateItem.includes('"')) {
+                        rateItem = rateItem.replace(/"+/g, '');
+                    }
+                    rateItem = rateItem*1;
                     contractObj.insertLine({
                         sublistId: 'item',
                         line: contractLine
@@ -409,7 +439,6 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                     if (lineData == 0) {
                         vendor = datos[lineData][1];
                         subsidiary = datos[lineData][3];
-                        location = datos[lineData][4];
                         date = new Date(datos[lineData][5]);
                         custContract = datos[lineData][11];
                         shipTo = datos[lineData][10];
@@ -420,10 +449,6 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                         contractObj.setValue({
                             fieldId: 'subsidiary',
                             value: subsidiary
-                        });
-                        contractObj.setValue({
-                            fieldId: 'location',
-                            value: location
                         });
                         contractObj.setValue({
                             fieldId: 'trandate',
@@ -439,8 +464,12 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                         });
                     }
                     var idItem = datos[lineData][6];
-                    var quantityItem = datos[lineData][8];
-                    var rateItem = datos[lineData][9];
+                    var quantityItem = datos[lineData][7];
+                    var rateItem = datos[lineData][8];
+                    if (rateItem.includes('"')) {
+                        rateItem = rateItem.replace(/"+/g, '');
+                    }
+                    rateItem = rateItem*1;
                     // log.debug({title:'Valores to set line: ' + lineData, details:{idItem: idItem, quantityItem: quantityItem, rateItem: rateItem}});
                     contractObj.selectNewLine({
                         sublistId: 'item'
@@ -523,6 +552,7 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                 // log.debug({title:'Datos calc', details:{total: total, contractpas: actual}});
                 if (total != 0) {
                     percent = (actual * 100) / total;
+                    percent = percent.toFixed(2)
                     // log.debug({title:'Recalculando', details:percent});
                 }
                 var updPercent = record.submitFields({
@@ -548,11 +578,11 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                     vendorNumber=datos[line][1];
                     subsidiary=datos[line][3];
                     location=datos[line][4];
-                    date=datos[line][5];
-                    shipTo = datos[line][10];
-                    cusContract = datos[line][11];
-                    itemSKUArray.push(datos[line][6]);
-                    filtersItems.push(['name','is',datos[line][6]]);
+                    date=datos[line][4];
+                    shipTo = datos[line][9];
+                    cusContract = datos[line][10];
+                    itemSKUArray.push(datos[line][5]);
+                    filtersItems.push(['name','is',datos[line][5]]);
                     if (line<datos.length-1) {
                         filtersItems.push('OR')
                     }
@@ -616,46 +646,46 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                     dataReturn.error= 'Failed to search for subsidiary';
                     return dataReturn;
                 }
-                try {
-                    var locationSearchObj = search.create({
-                        type: search.Type.LOCATION,
-                        filters:
-                        [
-                           ["name","is",location], 
-                           "AND", 
-                           ["isinactive","is","F"], 
-                           "AND", 
-                           ["subsidiary","anyof",idSubsidiary]
-                        ],
-                        columns:
-                        [
-                           search.createColumn({
-                              name: "internalid",
-                              sort: search.Sort.ASC,
-                              label: "ID interno"
-                           }),
-                           search.createColumn({name: "name", label: "Nombre"}),
-                           search.createColumn({name: "phone", label: "Teléfono"}),
-                           search.createColumn({name: "city", label: "Ciudad"})
-                        ]
-                    });
-                    var searchResultCount = locationSearchObj.runPaged().count;
-                    // log.debug("locationSearchObj result count",searchResultCount);
-                    if (searchResultCount>0) {
-                        locationSearchObj.run().each(function(result){
-                            idLocation = result.getValue({name: 'internalid'});
-                            return true;
-                        });
-                    }else{
-                        dataReturn.error='Location is not available';
-                        return dataReturn;
-                    }
-                } catch (errorLocation) {
-                    log.error({title:'validateInormation_location', details:errorLocation});
-                    dataReturn.succes = false;
-                    dataReturn.error= 'Failed to search for location';
-                    return dataReturn;
-                }
+                // try {
+                //     var locationSearchObj = search.create({
+                //         type: search.Type.LOCATION,
+                //         filters:
+                //         [
+                //            ["name","is",location], 
+                //            "AND", 
+                //            ["isinactive","is","F"], 
+                //            "AND", 
+                //            ["subsidiary","anyof",idSubsidiary]
+                //         ],
+                //         columns:
+                //         [
+                //            search.createColumn({
+                //               name: "internalid",
+                //               sort: search.Sort.ASC,
+                //               label: "ID interno"
+                //            }),
+                //            search.createColumn({name: "name", label: "Nombre"}),
+                //            search.createColumn({name: "phone", label: "Teléfono"}),
+                //            search.createColumn({name: "city", label: "Ciudad"})
+                //         ]
+                //     });
+                //     var searchResultCount = locationSearchObj.runPaged().count;
+                //     // log.debug("locationSearchObj result count",searchResultCount);
+                //     if (searchResultCount>0) {
+                //         locationSearchObj.run().each(function(result){
+                //             idLocation = result.getValue({name: 'internalid'});
+                //             return true;
+                //         });
+                //     }else{
+                //         dataReturn.error='Location is not available';
+                //         return dataReturn;
+                //     }
+                // } catch (errorLocation) {
+                //     log.error({title:'validateInormation_location', details:errorLocation});
+                //     dataReturn.succes = false;
+                //     dataReturn.error= 'Failed to search for location';
+                //     return dataReturn;
+                // }
                 try {
                     var customerSearchObj = search.create({
                         type: search.Type.CUSTOMER,
@@ -785,12 +815,14 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                         pageSize: 1000
                     });
                     // log.debug("itemSearchObj result count",myPagedData.count);
-                    if (myPagedData.count == itemSKUArray.length) { // se encontraron todos los articulos
+                    var itemsFound = [];
+                    if (myPagedData.count > 0) {
                         myPagedData.pageRanges.forEach(function(pageRange){
                             var myPage = myPagedData.fetch({index: pageRange.index});
                             myPage.data.forEach(function(result){
                                 var skuFound = result.getValue({name: 'itemid'});
                                 var posicionItem = itemSKUArray.indexOf(skuFound);
+                                itemsFound.push(skuFound);
                                 var itemid = result.getValue({name: 'internalid'});
                                 datos[posicionItem][6] = itemid;
                                 datos[posicionItem][3] = idSubsidiary;
@@ -800,11 +832,35 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                                 datos[posicionItem][11] = idCusContract;
                             });
                         });
+                    }
+                    if (myPagedData.count == itemSKUArray.length) { // se encontraron todos los articulos
                         // log.debug({title:'FinalDataMap', details:datos});
                         dataReturn.succes= true;
                         dataReturn.newData= datos;
                     }else{
-                        dataReturn.error='Items are not available'
+                        var messageErrorItems = '';
+                        var itemSKUArrayAux = [];
+                        var itemsDuplicados = [];
+                        for (let skuItem = 0; skuItem < itemSKUArray.length; skuItem++) {
+                            if (itemSKUArrayAux.indexOf(itemSKUArray[skuItem]) == -1) {
+                                itemSKUArrayAux.push(itemSKUArray[skuItem]);
+                            }else{
+                                itemsDuplicados.push(itemSKUArray[skuItem]);
+                            }
+                        }
+                        if (myPagedData.count == itemSKUArrayAux.length) { // existen datos duplicados
+                            messageErrorItems += itemsDuplicados + ' are/is dupicated in csv'
+                        }else{ // faltan articulos en Netsuite
+                            // log.error({ title:'datos en line', details:{csv: itemSKUArrayAux.length, netsuite: itemsFound.length} });
+                            for (let lineDatItem = 0; lineDatItem < itemSKUArrayAux.length; lineDatItem++) {
+                                // log.error({ title:'validaciones linea: ' + lineDatItem, details:{item: itemSKUArrayAux[lineDatItem], netsuite: itemsFound, validacion: itemsFound.indexOf(itemSKUArrayAux[lineDatItem])} });
+                                if (itemsFound.indexOf(itemSKUArrayAux[lineDatItem]) == -1) {
+                                    messageErrorItems += itemSKUArrayAux[lineDatItem] + ' Item are not available. ';
+                                    // log.error({ title:'messageErrorItems', details:messageErrorItems });
+                                }
+                            }
+                        }
+                        dataReturn.error=messageErrorItems;
                         return dataReturn;
                     }
                 } catch (errorItems) {
