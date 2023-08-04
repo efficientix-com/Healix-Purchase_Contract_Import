@@ -157,7 +157,7 @@
       <storevalue>T</storevalue>
       <subtab></subtab>
     </customrecordcustomfield>
-    <customrecordcustomfield scriptid="custrecord_fb_tracking_transactions">
+    <customrecordcustomfield scriptid="custrecord_fb_tracking_contracts_founded">
       <accesslevel>2</accesslevel>
       <allowquickadd>F</allowquickadd>
       <applyformatting>F</applyformatting>
@@ -165,30 +165,30 @@
       <defaultchecked>F</defaultchecked>
       <defaultselection></defaultselection>
       <defaultvalue></defaultvalue>
-      <description></description>
+      <description>Contracts founded in the csv file.</description>
       <displayheight></displayheight>
       <displaytype>LOCKED</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
-      <fieldtype>MULTISELECT</fieldtype>
+      <fieldtype>TEXT</fieldtype>
       <globalsearch>F</globalsearch>
-      <help></help>
+      <help>Contracts founded in the csv file.</help>
       <isformula>F</isformula>
       <ismandatory>F</ismandatory>
       <isparent>F</isparent>
-      <label>Transactions executed</label>
+      <label>Contracts found in the CSV file</label>
       <linktext></linktext>
       <maxlength></maxlength>
       <maxvalue></maxvalue>
       <minvalue></minvalue>
-      <onparentdelete>SET_NULL</onparentdelete>
+      <onparentdelete></onparentdelete>
       <parentsubtab></parentsubtab>
       <rolerestrict>F</rolerestrict>
       <searchcomparefield></searchcomparefield>
       <searchdefault></searchdefault>
       <searchlevel>2</searchlevel>
-      <selectrecordtype>-30</selectrecordtype>
+      <selectrecordtype></selectrecordtype>
       <showinlist>F</showinlist>
       <sourcefilterby></sourcefilterby>
       <sourcefrom></sourcefrom>
@@ -196,7 +196,7 @@
       <storevalue>T</storevalue>
       <subtab></subtab>
     </customrecordcustomfield>
-    <customrecordcustomfield scriptid="custrecord_fb_tracking_notes">
+    <customrecordcustomfield scriptid="custrecord_fb_tracking_errors">
       <accesslevel>2</accesslevel>
       <allowquickadd>F</allowquickadd>
       <applyformatting>F</applyformatting>
@@ -204,19 +204,19 @@
       <defaultchecked>F</defaultchecked>
       <defaultselection></defaultselection>
       <defaultvalue></defaultvalue>
-      <description></description>
-      <displayheight>12</displayheight>
-      <displaytype>NORMAL</displaytype>
-      <displaywidth>120</displaywidth>
+      <description>Check to indentify if the proccess has errors.</description>
+      <displayheight></displayheight>
+      <displaytype>HIDDEN</displaytype>
+      <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
-      <fieldtype>TEXTAREA</fieldtype>
+      <fieldtype>CHECKBOX</fieldtype>
       <globalsearch>F</globalsearch>
-      <help></help>
+      <help>Check to indentify if the proccess has errors.</help>
       <isformula>F</isformula>
       <ismandatory>F</ismandatory>
       <isparent>F</isparent>
-      <label>Notes</label>
+      <label>Errors</label>
       <linktext></linktext>
       <maxlength></maxlength>
       <maxvalue></maxvalue>
@@ -236,4 +236,28 @@
       <subtab></subtab>
     </customrecordcustomfield>
   </customrecordcustomfields>
+  <subtabs>
+    <subtab scriptid="tab_1443_7076975_sb1_657">
+      <tabparent></tabparent>
+      <tabtitle>Contracts created</tabtitle>
+    </subtab>
+    <subtab scriptid="tab_1442_7076975_sb1_806">
+      <tabparent></tabparent>
+      <tabtitle>Upload errors</tabtitle>
+    </subtab>
+  </subtabs>
+  <recordsublists>
+    <recordsublist scriptid="sublist_1337_7076975_sb1_270">
+      <recorddescr>Contracts created</recorddescr>
+      <recordfield></recordfield>
+      <recordsearch>[scriptid=customsearch_fb_search_contracts_by_file]</recordsearch>
+      <recordtab>[scriptid=customrecord_fb_uploaded_files.tab_1443_7076975_sb1_657]</recordtab>
+    </recordsublist>
+    <recordsublist scriptid="sublist_1338_7076975_sb1_677">
+      <recorddescr>Upload errors</recorddescr>
+      <recordfield></recordfield>
+      <recordsearch>[scriptid=customsearch_fb_search_errors_by_file]</recordsearch>
+      <recordtab>[scriptid=customrecord_fb_uploaded_files.tab_1442_7076975_sb1_806]</recordtab>
+    </recordsublist>
+  </recordsublists>
 </customrecordtype>

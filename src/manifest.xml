@@ -4,14 +4,43 @@
   <dependencies>
     <features>
       <feature required="false">MULTILANGUAGE</feature>
-      <feature required="true">SERVERSIDESCRIPTING</feature>
-      <feature required="false">MATRIXITEMS</feature>
+      <feature required="false">EXPREPORTS</feature>
+      <feature required="false">ADVRECEIVING</feature>
+      <feature required="false">MULTILOCINVT</feature>
+      <feature required="false">INVENTORY</feature>
       <feature required="false">CRM</feature>
-      <feature required="false">CUSTOMSEGMENTS</feature>
+      <feature required="false">CUSTOMTRANSACTIONS</feature>
+      <feature required="false">SUBSCRIPTIONBILLING</feature>
       <feature required="false">EXTREMELIST</feature>
-      <feature required="false">MAILMERGE</feature>
+      <feature required="false">RECEIVABLES</feature>
       <feature required="true">CUSTOMRECORDS</feature>
+      <feature required="false">PAYABLES</feature>
+      <feature required="false">PERIODENDJOURNALENTRIES</feature>
+      <feature required="true">SERVERSIDESCRIPTING</feature>
+      <feature required="false">CUSTOMSEGMENTS</feature>
+      <feature required="false">ACCOUNTING</feature>
       <feature required="false">CREATESUITEBUNDLES</feature>
     </features>
+    <objects>
+      <object>custbody_11187_pref_entity_bank</object>
+      <object>custbody_tkio_hl_customer_contract</object>
+      <object>custbody_15699_exclude_from_ep_process</object>
+      <object>custbody_tkio_hl_ship_to_con</object>
+      <object>custbody_11724_pay_bank_fees</object>
+      <object>customrecord_2663_entity_bank_details</object>
+      <object>custbody_15529_vendor_entity_bank</object>
+      <object>custbody_tkio_purchase_order_hl_asn</object>
+      <object>custbody_15529_emp_entity_bank</object>
+      <object>custbody_11724_bank_fee</object>
+      <object>custbody_10184_customer_entity_bank</object>
+    </objects>
+    <applications>
+      <application id="com.suitesuccess.erpcore">
+        <objects>
+          <object>customrecord_atlas_inv_adj_reasn</object>
+          <object>custbody_atlas_inv_adj_reason</object>
+        </objects>
+      </application>
+    </applications>
   </dependencies>
 </manifest>

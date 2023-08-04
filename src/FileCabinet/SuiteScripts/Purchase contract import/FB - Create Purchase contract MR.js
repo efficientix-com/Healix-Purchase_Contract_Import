@@ -40,7 +40,7 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
             var parameter_record = runtime.getCurrentScript().getParameter({name: "custscript_fb_carte_record_to_process"});
             log.audit({title:'Inicio de procesamiento', details:parameter_record});
             try {
-                updateTrackingRecord(parameter_record, 6, '', '', true);
+                updateTrackingRecord(parameter_record, 6, false);
                 // updatePercent(0,0);
                 var recordFile = search.lookupFields({
                    type: 'customrecord_fb_uploaded_files',
@@ -89,7 +89,9 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                                     linenumber++;
                                     return true;
                                 }else{ // No se tiene bien la estructura
-                                    updateTrackingRecord(parameter_record, 6, 'The file does not have the correct structure.', '', false);
+                                    let message = 'The file does not have the correct structure.';
+                                    updateTrackingRecord(parameter_record, 6, true);
+                                    createErrorRecord(parameter_record, message);
                                     return false;
                                 }
                             }
@@ -139,13 +141,23 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                         }
                     }
                     log.debug({title:'finalData Transform', details:finalData});
+                    let updTotalContracts = record.submitFields({
+                        type: 'customrecord_fb_uploaded_files',
+                        id: parameter_record,
+                        values: {
+                           'custrecord_fb_tracking_contracts_founded' : allContracts
+                        }
+                    });
                     return finalData;
                 }else{
-                    updateTrackingRecord(parameter_record, 6, 'There is no file to process.', '', false);
+                    let message = 'There is no file to process.';
+                    updateTrackingRecord(parameter_record, 6, true);
+                    createErrorRecord(parameter_record, message);
                 }
             } catch (error) {
                 log.error({title:'getInputdata', details:error});
-                updateTrackingRecord(parameter_record, 5, 'An error occurred while trying to process the file, please try again.', '', false);
+                updateTrackingRecord(parameter_record, 5, true);
+                createContract(parameter_record, 'An error occurred while trying to process the file, please try again.');
             }
         }
 
@@ -204,7 +216,8 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                         notes = '\n The lines do not match for the Ship to Contract: ' + shipTo + ', Vendor: ' + vendorNumber + ' and customer ' + cusContract;
                     }
                     log.error({title:'Error no coinciden lineas en file', details:notes});
-                    updateTrackingRecord(parameter_record, 7, notes, '', false);
+                    updateTrackingRecord(parameter_record, 7, true);
+                    createErrorRecord(parameter_record, notes);
                 }else{
                     var validateResult = validateInformation(datos);
                     // log.debug({title:'validateResult', details:validateResult});
@@ -222,7 +235,8 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                             notes = '\n ' + validateResult.error +' for the Ship to Contract: ' + shipTo + ', Vendor: ' + vendorNumber + ' and Customer ' + cusContract;
                         }
                         log.audit({title:'Error al validar infor', details:notes});
-                        updateTrackingRecord(parameter_record, 7, notes, '', false);
+                        updateTrackingRecord(parameter_record, 7, true);
+                        createErrorRecord(parameter_record, notes);
                     }
                 }
             } catch (error) {
@@ -270,9 +284,10 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                     log.audit({title:'contractResult_upd', details:contractResult});
                 }
                 if (contractResult.succes == true) {
-                    updateTrackingRecord(trackingRecord, 8, '', contractResult.idContract, false);
+                    updateTrackingRecord(trackingRecord, 8, false);
                 }else{
-                    updateTrackingRecord(trackingRecord, 8, contractResult.error, '', false);
+                    updateTrackingRecord(trackingRecord, 8, true);
+                    createErrorRecord(trackingRecord, contractResult.error);
                 }
             } catch (error) {
                 log.error({title:'reduce', details:error});
@@ -306,18 +321,18 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                 var notes = search.lookupFields({
                    type: 'customrecord_fb_uploaded_files',
                    id: parameter_record,
-                   columns: ['custrecord_fb_tracking_notes', 'custrecord_fb_tracking_status']
+                   columns: ['custrecord_fb_tracking_errors', 'custrecord_fb_tracking_status']
                 });
                 var status = notes.custrecord_fb_tracking_status[0].value;
-                notes = notes.custrecord_fb_tracking_notes;
+                notes = notes.custrecord_fb_tracking_errors;
                 if (status!=5) {
-                    if (notes != '') {
+                    if (notes == true) {
                         status = 4;
                     }else{
                         status = 3;
                     }
                 }
-                updateTrackingRecord(parameter_record, status, '', '', false);
+                updateTrackingRecord(parameter_record, status, false);
                 updatePercent(1,1);
                 log.audit({title:'Final del summarize', details:'trackingRecord: ' + parameter_record});
             } catch (error) {
@@ -376,7 +391,6 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                         newLinesIds.splice(position, 1);
                     }
                 }
-                log.debug({title:'NewDatos', details:datos});
                 // Add new Lines
                 for (var newLine = 0; newLine < datos.length; newLine++) {
                     var dataInLine = datos[newLine];
@@ -430,6 +444,7 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
         function createContract(datos) {
             var dataReturn = {succes: false, error:'', idContract: ''}
             try {
+                let regId = runtime.getCurrentScript().getParameter({name: "custscript_fb_carte_record_to_process"});                
                 var vendor, subsidiary, location, date, shipTo, custContract;
                 var contractObj = record.create({
                     type: record.Type.PURCHASE_CONTRACT,
@@ -462,6 +477,11 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                             fieldId: 'custbody_tkio_hl_ship_to_con',
                             value: shipTo
                         });
+                        contractObj.setValue({
+                            fieldId: 'custbody_fb_upload_file_record',
+                            value: regId
+                        });
+                        
                     }
                     var idItem = datos[lineData][6];
                     var quantityItem = datos[lineData][7];
@@ -508,37 +528,17 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
             return dataReturn;
         }
 
-        function updateTrackingRecord(recordId, status, notes, transaction, clearNotes) {
+        function updateTrackingRecord(recordId, status, isError) {
             try {
                 // log.debug({title:'Data to update', details:{recordId: recordId, status: status, notes: notes, transaction: transaction, clearNotes: clearNotes}});
-                var recordInfo = search.lookupFields({
-                    type: 'customrecord_fb_uploaded_files',
-                    id: recordId,
-                    columns: ['custrecord_fb_tracking_notes', 'custrecord_fb_tracking_transactions']
-                });
-                var recordNotes = recordInfo.custrecord_fb_tracking_notes;
-                var recordTrans = recordInfo.custrecord_fb_tracking_transactions;
-                var allTrans=[];
-                if (transaction != '') {
-                    allTrans.push(transaction);
-                }
-                if (recordTrans.length > 0) {
-                    for (var index = 0; index < recordTrans.length; index++) {
-                        allTrans.push(recordTrans[index].value);
-                    }
-                }
-                if (clearNotes) {
-                    recordNotes='';
-                    allTrans=[];
+                let valuesUpd = {'custrecord_fb_tracking_status' : status}
+                if (isError == true) {
+                    valuesUpd['custrecord_fb_tracking_errors'] = true;
                 }
                 var trackingRecord = record.submitFields({
                     type: 'customrecord_fb_uploaded_files',
                     id: recordId,
-                    values: {
-                       'custrecord_fb_tracking_status' : status,
-                       'custrecord_fb_tracking_notes' : recordNotes + notes,
-                       'custrecord_fb_tracking_transactions' : allTrans
-                    }
+                    values: valuesUpd
                 });
             } catch (error) {
                 log.error({title:'updateTrackingRecord', details:error});
@@ -874,6 +874,37 @@ define(['N/file', 'N/log', 'N/record', 'N/search', 'N/runtime', './moment.js', '
                 dataReturn.error= error;
             }
             return dataReturn
+        }
+
+        function createErrorRecord(recordMaster, msg) {
+            const response = {succes: false, error: '', recordId: ''};
+            try {
+                var errorRecord = record.create({
+                    type: 'customrecord_fb_upl_file_errors',
+                    isDynamic: true
+                });
+                errorRecord.setValue({
+                    fieldId: 'custrecord_fb_upl_file_err_regid',
+                    value: recordMaster
+                });
+                errorRecord.setValue({
+                    fieldId: 'custrecord_fb_upl_file_err_msg',
+                    value: msg
+                });
+                var saveError = errorRecord.save({
+                    enableSourcing: true,
+                    ignoreMandatoryFields: true
+                });
+                if (saveError) {
+                    response.succes = true;
+                    response.recordId = saveError;
+                }
+            } catch (error) {
+                log.error({ title:'createErrorRecord', details:error });
+                response.succes = false;
+                response.error = error;
+            }
+            return response;
         }
 
         return {getInputData, map, reduce, summarize}

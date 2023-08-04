@@ -39,7 +39,7 @@
     <scriptdeployment scriptid="customdeploy_fb_carte_purchase_mr_1">
       <buffersize>1</buffersize>
       <concurrencylimit>1</concurrencylimit>
-      <custscript_fb_carte_record_to_process>2</custscript_fb_carte_record_to_process>
+      <custscript_fb_carte_record_to_process>37</custscript_fb_carte_record_to_process>
       <isdeployed>T</isdeployed>
       <loglevel>DEBUG</loglevel>
       <queueallstagesatonce>T</queueallstagesatonce>
@@ -74,16 +74,16 @@
         </single>
       </recurrence>
     </scriptdeployment>
-    <scriptdeployment scriptid="customdeploy_fb_carte_purchase_mr_3">
+    <scriptdeployment scriptid="customdeploy_fb_carte_purchase_mr_5">
       <buffersize>1</buffersize>
       <concurrencylimit>1</concurrencylimit>
-      <custscript_fb_carte_record_to_process></custscript_fb_carte_record_to_process>
+      <custscript_fb_carte_record_to_process>22</custscript_fb_carte_record_to_process>
       <isdeployed>T</isdeployed>
       <loglevel>DEBUG</loglevel>
       <queueallstagesatonce>T</queueallstagesatonce>
       <runasrole>ADMINISTRATOR</runasrole>
       <status>NOTSCHEDULED</status>
-      <title>FB - Create Purchase contract MR 3</title>
+      <title>FB - Create Purchase contract MR 5</title>
       <yieldaftermins>60</yieldaftermins>
       <recurrence>
         <single>
@@ -112,7 +112,7 @@
         </single>
       </recurrence>
     </scriptdeployment>
-    <scriptdeployment scriptid="customdeploy_fb_carte_purchase_mr_5">
+    <scriptdeployment scriptid="customdeploy_fb_carte_purchase_mr_3">
       <buffersize>1</buffersize>
       <concurrencylimit>1</concurrencylimit>
       <custscript_fb_carte_record_to_process></custscript_fb_carte_record_to_process>
@@ -121,7 +121,7 @@
       <queueallstagesatonce>T</queueallstagesatonce>
       <runasrole>ADMINISTRATOR</runasrole>
       <status>NOTSCHEDULED</status>
-      <title>FB - Create Purchase contract MR 5</title>
+      <title>FB - Create Purchase contract MR 3</title>
       <yieldaftermins>60</yieldaftermins>
       <recurrence>
         <single>
